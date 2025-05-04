@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Keep-Alive Tool</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-['Lexend'] bg-gray-100 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Website Keep-Alive Tool</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2">Target URL</label>
+                <input type="url" id="urlInput" 
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://example.com">
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2">Number of Servers</label>
+                <select id="serverCount" 
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="1">1 Server</option>
+                    <option value="2">2 Servers</option>
+                    <option value="3">3 Servers</option>
+                    <option value="5">5 Servers</option>
+                </select>
+            </div>
+            
+            <button onclick="toggleMonitoring()" id="toggleBtn"
+                class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2">
+                <i data-lucide="play"></i>
+                Start Monitoring
+            </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Request Console</h2>
+            <div id="console" class="bg-gray-50 p-4 rounded-lg h-96 overflow-y-auto space-y-2">
+                <!-- Console messages will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isMonitoring = false;
+        let intervalId = null;
+        const consoleElement = document.getElementById('console');
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        function logToConsole(message, status) {
+            const timestamp = new Date().toLocaleTimeString();
+            const statusColor = status === 'success' ? 'text-green-600' : 'text-red-600';
+            const icon = status === 'success' ? 'check-circle' : 'x-circle';
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'flex items-center gap-3';
+            logEntry.innerHTML = `
+                <i data-lucide="${icon}" class="w-5 h-5 ${statusColor}"></i>
+                <span class="text-gray-600">[${timestamp}]</span>
+                <span>${message}</span>
+                <span class="${statusColor} font-medium">${status.toUpperCase()}</span>
+            `;
+            consoleElement.appendChild(logEntry);
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+            Lucide.createIcons();
+        }
+
+        async function sendRequest(url) {
+            try {
+                const response = await fetch(url, { mode: 'no-cors' });
+                logToConsole(`Request to ${url}`, 'success');
+            } catch (error) {
+                logToConsole(`Request to ${url} failed`, 'error');
+            }
+        }
+
+        function toggleMonitoring() {
+            const urlInput = document.getElementById('urlInput').value;
+            if (!urlInput) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            isMonitoring = !isMonitoring;
+            
+            if (isMonitoring) {
+                toggleBtn.innerHTML = `<i data-lucide="stop"></i> Stop Monitoring`;
+                toggleBtn.classList.remove('bg-blue-500');
+                toggleBtn.classList.add('bg-red-500');
+                
+                // Immediate first request
+                sendRequest(urlInput);
+                
+                // Set interval for subsequent requests (60 seconds)
+                intervalId = setInterval(() => {
+                    sendRequest(urlInput);
+                }, 60000);
+            } else {
+                toggleBtn.innerHTML = `<i data-lucide="play"></i> Start Monitoring`;
+                toggleBtn.classList.remove('bg-red-500');
+                toggleBtn.classList.add('bg-blue-500');
+                clearInterval(intervalId);
+            }
+            
+            Lucide.createIcons();
+        }
+
+        // Initialize Lucide icons
+        Lucide.createIcons();
+    </script>
+</body>
+</html>
