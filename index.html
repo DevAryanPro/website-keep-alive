@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UpTimeX - Advanced Server Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        lexend: ['Lexend', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="font-lexend bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-indigo-600">UpTimeX</h1>
+                <p class="text-gray-600">Advanced Server Monitoring with Real Traffic</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="h-3 w-3 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-sm" id="activeRequests">0 active requests</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+                <h2 class="text-xl font-semibold mb-4">Add New Monitor</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                        <input type="text" id="urlInput" placeholder="https://example.com" 
+                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Requests per minute</label>
+                            <select id="requestFrequency" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="1">1 request/min</option>
+                                <option value="5">5 requests/min</option>
+                                <option value="10" selected>10 requests/min</option>
+                                <option value="30">30 requests/min</option>
+                                <option value="60">60 requests/min</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Server Count</label>
+                            <select id="serverCount" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="25">25 Servers</option>
+                                <option value="50">50 Servers</option>
+                                <option value="75">75 Servers</option>
+                                <option value="100">100 Servers</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="addBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-1 w-full justify-center">
+                        <i data-lucide="plus"></i> Add Monitor
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Live Activity</h2>
+                <div class="space-y-2" id="liveActivity">
+                    <div class="text-center py-8 text-gray-400">
+                        <p>No activity yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Uptime Statistics</h2>
+            <div class="h-64">
+                <canvas id="uptimeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Your Monitors</h2>
+            <div id="monitorsList" class="space-y-4">
+                <!-- Monitors will be added here -->
+                <div class="text-center py-12 text-gray-400">
+                    <p>No monitors added yet</p>
+                    <p class="text-sm mt-2">Add your first website above to begin monitoring</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
